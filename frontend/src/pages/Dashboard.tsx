@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import MapComponent from '../components/MapComponent';
 import { getPorts, createRoute } from '../services/api';
-import { Ship, Wind, ShieldAlert, Navigation } from 'lucide-react';
+import { Ship, ShieldAlert, Navigation } from 'lucide-react';
 
 const Dashboard = () => {
     const [ports, setPorts] = useState<any[]>([]);

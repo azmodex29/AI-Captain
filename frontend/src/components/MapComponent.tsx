@@ -1,6 +1,5 @@
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect } from 'react';
 import L from 'leaflet';
 
 // Fix for default marker icons in Leaflet with React
@@ -19,7 +18,13 @@ let DefaultIcon = L.icon({
     shadowSize: [41, 41]
 });
 
-L.Marker.prototype.options.icon = DefaultIcon;
+// @ts-ignore
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIconRetina,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
 
 interface MapComponentProps {
     route?: any;
