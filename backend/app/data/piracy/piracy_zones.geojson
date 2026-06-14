@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Somalia / Gulf of Aden", "risk_level": "High" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [43.0, 11.0], [52.0, 15.0], [58.0, 12.0], [52.0, 0.0], [45.0, 2.0], [43.0, 11.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Gulf of Guinea", "risk_level": "High" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-10.0, 5.0], [10.0, 5.0], [10.0, -5.0], [-10.0, -5.0], [-10.0, 5.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Strait of Malacca", "risk_level": "Medium" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [95.0, 6.0], [105.0, 1.0], [104.0, -2.0], [94.0, 4.0], [95.0, 6.0]
+        ]]
+      }
+    }
+  ]
+}

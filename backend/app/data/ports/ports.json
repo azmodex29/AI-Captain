@@ -1,0 +1,14 @@
+[
+  { "id": 1, "name": "Mumbai", "lat": 18.95, "lon": 72.85 },
+  { "id": 2, "name": "Singapore", "lat": 1.29, "lon": 103.85 },
+  { "id": 3, "name": "Shanghai", "lat": 31.23, "lon": 121.47 },
+  { "id": 4, "name": "Rotterdam", "lat": 51.92, "lon": 4.48 },
+  { "id": 5, "name": "New York", "lat": 40.71, "lon": -74.01 },
+  { "id": 6, "name": "Jebel Ali", "lat": 24.99, "lon": 55.07 },
+  { "id": 7, "name": "Busan", "lat": 35.17, "lon": 129.07 },
+  { "id": 8, "name": "Hong Kong", "lat": 22.32, "lon": 114.17 },
+  { "id": 9, "name": "Antwerp", "lat": 51.22, "lon": 4.40 },
+  { "id": 10, "name": "Los Angeles", "lat": 33.73, "lon": -118.24 },
+  { "id": 11, "name": "Port Said", "lat": 31.26, "lon": 32.30 },
+  { "id": 12, "name": "Panama Canal (Colon)", "lat": 9.35, "lon": -79.90 }
+]

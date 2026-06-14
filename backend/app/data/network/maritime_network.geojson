@@ -1,0 +1,85 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "type": "waypoint", "name": "Suez Canal South" },
+      "geometry": { "type": "Point", "coordinates": [32.5, 29.9] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "waypoint", "name": "Bab-el-Mandeb" },
+      "geometry": { "type": "Point", "coordinates": [43.3, 12.6] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "waypoint", "name": "Strait of Hormuz" },
+      "geometry": { "type": "Point", "coordinates": [56.3, 26.6] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "waypoint", "name": "Malacca Entry" },
+      "geometry": { "type": "Point", "coordinates": [98.0, 4.0] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "lane", "name": "Mumbai-Singapore-Lane" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [72.85, 18.95], [75.0, 10.0], [80.0, 5.0], [95.0, 5.0], [103.85, 1.29]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "lane", "name": "Singapore-Shanghai-Lane" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [103.85, 1.29], [108.0, 10.0], [115.0, 20.0], [121.47, 31.23]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "lane", "name": "Mumbai-Suez-Lane" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [72.85, 18.95], [60.0, 15.0], [43.3, 12.6], [32.5, 29.9]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "lane", "name": "Suez-Rotterdam-Lane" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [32.5, 29.9], [20.0, 35.0], [-5.0, 35.0], [-10.0, 45.0], [4.48, 51.92]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "lane", "name": "Rotterdam-NewYork-Lane" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [4.48, 51.92], [-20.0, 50.0], [-50.0, 45.0], [-74.01, 40.71]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "type": "lane", "name": "NewYork-Panama-Lane" },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-74.01, 40.71], [-75.0, 30.0], [-80.0, 20.0], [-79.90, 9.35]
+        ]
+      }
+    }
+  ]
+}
