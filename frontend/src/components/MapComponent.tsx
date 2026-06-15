@@ -3,25 +3,6 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useEffect, useState } from 'react';
 
-// Fix for default marker icons in Leaflet + Vite
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41]
-});
-
-// Custom Port Icon
-const portIcon = L.divIcon({
-    className: 'custom-div-icon',
-    html: `<div style="background-color: #3b82f6; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px rgba(59,130,246,0.8);"></div>`,
-    iconSize: [12, 12],
-    iconAnchor: [6, 6]
-});
-
 // Vessel Icon
 const vesselIcon = L.divIcon({
     className: 'vessel-icon',
