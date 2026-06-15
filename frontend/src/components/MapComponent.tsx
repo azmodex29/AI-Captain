@@ -4,6 +4,13 @@ import L from 'leaflet';
 import { useEffect, useState } from 'react';
 
 // Vessel Icon
+const portIcon = L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div style="background-color: #3b82f6; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px rgba(59,130,246,0.8);"></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6]
+});
+
 const vesselIcon = L.divIcon({
     className: 'vessel-icon',
     html: `<div style="transform: rotate(45deg);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 22l10-4 10 4Z"></path></svg></div>`,
