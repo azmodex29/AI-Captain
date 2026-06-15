@@ -26,4 +26,7 @@ def register_error_handlers(app):
 
     @app.errorhandler(500)
     def internal_error(error):
+        app.logger.error(f"Server Error: {str(error)}")
+        import traceback
+        app.logger.error(traceback.format_exc())
         return jsonify({"message": "Internal server error", "status": "error"}), 500

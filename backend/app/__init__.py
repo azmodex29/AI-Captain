@@ -24,6 +24,15 @@ def create_app(config_name='dev'):
 
     register_error_handlers(app)
 
+    # Import models to ensure they are registered with SQLAlchemy
+    from app.models.user import User
+    from app.models.route import Route
+    from app.models.history import RouteHistory
+
+    # Create tables
+    with app.app_context():
+        db.create_all()
+
     # Register Blueprints
     from app.api.routes import bp as routes_bp
     app.register_blueprint(routes_bp, url_prefix='/api')
