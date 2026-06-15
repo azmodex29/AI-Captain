@@ -17,16 +17,22 @@ class GraphService:
     def __init__(self):
         self.graph = nx.Graph()
         self.data_path = os.path.join(os.path.dirname(__file__), '..', 'data')
-        # Simplified landmask polygons for major continents
+        # More surgical landmask polygons
         self.land_polygons = [
-            # Africa
-            Polygon([(20,-35), (51,-35), (51,37), (-17,37), (-17,5), (20,-35)]),
-            # Americas (North & South)
-            Polygon([(-168,72), (-50,72), (-35,-55), (-82,-55), (-168,72)]),
-            # Eurasia
-            Polygon([(170,75), (170,1), (80,1), (80,-10), (10,35), (-10,35), (-10,75), (170,75)]),
+            # Africa (simplified)
+            Polygon([(-20, -35), (52, -35), (52, 12), (32, 30), (-10, 37), (-20, 15)]),
+            # South America
+            Polygon([(-82, -56), (-34, -10), (-45, 12), (-80, 12), (-82, -56)]),
+            # North America
+            Polygon([(-168, 72), (-50, 72), (-60, 15), (-130, 15), (-168, 72)]),
+            # Eurasia (broken down to avoid blocking Suez/Gibraltar)
+            Polygon([(40, 75), (170, 75), (170, 15), (100, 10), (60, 25), (40, 75)]), # Northern Eurasia
+            Polygon([(-10, 75), (40, 75), (40, 36), (-10, 36), (-10, 75)]), # Europe
+            Polygon([(60, 30), (130, 30), (130, 10), (70, 8), (60, 30)]), # Southern Asia
             # Australia
-            Polygon([(113,-10), (154,-10), (154,-40), (113,-40), (113,-10)])
+            Polygon([(113, -40), (154, -40), (154, -10), (113, -10), (113, -40)]),
+            # Greenland
+            Polygon([(-60, 85), (-10, 85), (-10, 60), (-60, 60), (-60, 85)])
         ]
 
     def is_land(self, lat, lon):
@@ -37,36 +43,57 @@ class GraphService:
         return False
 
     def load_graph(self):
-        # 1. Generate Grid Nodes (5-degree resolution)
-        for lat in range(-60, 80, 5):
-            for lon in range(-180, 185, 5):
+        # 1. Generate Grid Nodes (3-degree resolution for better precision)
+        step = 3
+        grid_nodes = {}
+        for lat in range(-75, 85, step):
+            for lon in range(-180, 180, step):
                 if not self.is_land(lat, lon):
                     node_id = f"{lon},{lat}"
                     self.graph.add_node(node_id, lat=lat, lon=lon, type='waypoint')
+                    grid_nodes[(lon, lat)] = node_id
 
-        # 2. Add Passage Points (Critical Straits)
+        # 2. Add Critical Passage Points
         passages = [
-            {"name": "Suez", "lat": 29.9, "lon": 32.5},
-            {"name": "Panama", "lat": 9.35, "lon": -79.9},
+            {"name": "Suez South", "lat": 29.8, "lon": 32.5},
+            {"name": "Suez North", "lat": 31.3, "lon": 32.3},
+            {"name": "Panama East", "lat": 9.3, "lon": -79.9},
+            {"name": "Panama West", "lat": 8.9, "lon": -79.6},
             {"name": "Gibraltar", "lat": 35.9, "lon": -5.4},
             {"name": "Malacca", "lat": 2.5, "lon": 101.0},
             {"name": "Bab-el-Mandeb", "lat": 12.6, "lon": 43.3},
             {"name": "Hormuz", "lat": 26.6, "lon": 56.3},
-            {"name": "English Channel", "lat": 50.0, "lon": -1.0}
+            {"name": "English Channel", "lat": 50.0, "lon": -1.0},
+            {"name": "Cape of Good Hope", "lat": -35.0, "lon": 18.5},
+            {"name": "Cape Horn", "lat": -56.5, "lon": -67.3},
+            {"name": "Bering Strait", "lat": 66.0, "lon": -169.0}
         ]
         for p in passages:
-            node_id = f"{p['lon']},{p['lat']}"
+            node_id = f"passage_{p['name'].replace(' ', '_')}"
             self.graph.add_node(node_id, lat=p['lat'], lon=p['lon'], type='waypoint')
+            # Connect passage to nearest grid nodes
+            for (glon, glat), gn_id in grid_nodes.items():
+                if abs(glon - p['lon']) <= step and abs(glat - p['lat']) <= step:
+                    d = haversine(p['lon'], p['lat'], glon, glat)
+                    self.graph.add_edge(node_id, gn_id, weight=d)
 
-        # 3. Connect Grid with 8-way connectivity
-        nodes = list(self.graph.nodes(data=True))
-        for i, (n1_id, d1) in enumerate(nodes):
-            for j in range(i + 1, len(nodes)):
-                n2_id, d2 = nodes[j]
-                # Connect if nodes are within ~7.5 degrees (covers diagonals in 5-deg grid)
-                if abs(d1['lat'] - d2['lat']) <= 6 and abs(d1['lon'] - d2['lon']) <= 6:
-                    dist = haversine(d1['lon'], d1['lat'], d2['lon'], d2['lat'])
-                    self.graph.add_edge(n1_id, n2_id, weight=dist)
+        # 3. Connect Grid with 8-way connectivity (O(N) neighbor lookup)
+        for (lon, lat), n1_id in grid_nodes.items():
+            for dlon in [-step, 0, step]:
+                for dlat in [-step, 0, step]:
+                    if dlon == 0 and dlat == 0: continue
+                    
+                    nlone = lon + dlon
+                    nlat = lat + dlat
+                    
+                    # Wrap longitude for trans-Pacific routes
+                    if nlone >= 180: nlone -= 360
+                    if nlone < -180: nlone += 360
+                    
+                    n2_id = grid_nodes.get((nlone, nlat))
+                    if n2_id:
+                        dist = haversine(lon, lat, nlone, nlat)
+                        self.graph.add_edge(n1_id, n2_id, weight=dist)
 
         # 4. Load Ports and connect to nearest grid node
         ports_path = os.path.join(self.data_path, 'ports', 'ports.json')
@@ -76,18 +103,18 @@ class GraphService:
                 port_id = f"port_{port['id']}"
                 self.graph.add_node(port_id, name=port['name'], lat=port['lat'], lon=port['lon'], type='port')
                 
-                # Find nearest waypoint node
-                nearest_wp = None
+                # Find nearest grid node (checking more broadly than before)
+                nearest_node = None
                 min_dist = float('inf')
                 for node, data in self.graph.nodes(data=True):
                     if data.get('type') == 'waypoint':
                         d = haversine(port['lon'], port['lat'], data['lon'], data['lat'])
                         if d < min_dist:
                             min_dist = d
-                            nearest_wp = node
+                            nearest_node = node
                 
-                if nearest_wp:
-                    self.graph.add_edge(port_id, nearest_wp, weight=min_dist)
+                if nearest_node:
+                    self.graph.add_edge(port_id, nearest_node, weight=min_dist)
 
         # 5. Integrate Piracy Risk into Weights
         piracy_path = os.path.join(self.data_path, 'piracy', 'piracy_zones.geojson')
@@ -97,11 +124,10 @@ class GraphService:
             for feature in piracy_data['features']:
                 zones.append({
                     "poly": Polygon(feature['geometry']['coordinates'][0]),
-                    "risk": 5.0 if feature['properties']['risk_level'] == 'High' else 2.0
+                    "risk": 10.0 if feature['properties']['risk_level'] == 'High' else 3.0
                 })
 
         for u, v, data in self.graph.edges(data=True):
-            # Check if edge midpoint is in a piracy zone
             node_u = self.graph.nodes[u]
             node_v = self.graph.nodes[v]
             mid_lat = (node_u['lat'] + node_v['lat']) / 2
