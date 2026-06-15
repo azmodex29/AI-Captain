@@ -12,10 +12,19 @@ class Config:
         uri = uri.replace("postgres://", "postgresql://", 1)
     
     # Render doesn't support IPv6, and Supabase sometimes defaults to it.
-    # We force IPv4 by appending ?ipv6=false to Supabase URIs if not already present.
-    if uri and "supabase.co" in uri and "ipv6=false" not in uri:
-        separator = "&" if "?" in uri else "?"
-        uri = f"{uri}{separator}ipv6=false"
+    # We force IPv4 by resolving the hostname and passing it as hostaddr.
+    if uri and "supabase.co" in uri and "hostaddr=" not in uri:
+        import socket
+        from urllib.parse import urlparse
+        try:
+            hostname = urlparse(uri).hostname
+            if hostname:
+                ipv4 = socket.gethostbyname(hostname)
+                separator = "&" if "?" in uri else "?"
+                uri = f"{uri}{separator}hostaddr={ipv4}"
+        except Exception:
+            # Fallback to original URI if resolution fails
+            pass
     
     SQLALCHEMY_DATABASE_URI = uri
     SQLALCHEMY_TRACK_MODIFICATIONS = False
